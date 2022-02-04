@@ -1,6 +1,8 @@
 from pymongo import MongoClient
+from decouple import config
 
-client = MongoClient("mongodb+srv://bhilaibiryanihouseweb:BhilaiBiryaniHouse2022@cluster0.48fot.mongodb.net/items?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true")
+mongouri = config('MONGO_DETAILS')
+client = MongoClient(mongouri)
 db = client.BBH
 
 category_collection = db["categoryCollection"]
