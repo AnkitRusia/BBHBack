@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from mongosetup.mongodb import expire_collection
+from mongosetup.mongodb import expire_collection, user_collection
 
 router = APIRouter(
     prefix="/servercontrol",
@@ -20,3 +20,13 @@ def root():
     op['services'] = 1
     expire_collection.find_one_and_update({"_id": 1}, {"$set": op})
     return {"status": 200}
+
+@router.get('/server/password')
+def get_password(passwd: str):
+    user = user_collection.find_one({"_id": 1})
+    user = dict(user)
+    if passwd == user["passwd"]:
+        return {"status": 200}
+    return {"status": 401}
+    
+
