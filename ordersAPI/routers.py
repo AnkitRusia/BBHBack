@@ -1,4 +1,3 @@
-from tkinter import ACTIVE
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
 from ordersAPI.models import  GetItems, Stats, ConnectionManager
 from mongosetup.mongodb import order_collection, order_data_collection
