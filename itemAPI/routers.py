@@ -46,9 +46,11 @@ def get_by_id(id: str):
 def update_by_id(id: str, item: Item):
     expired()
     try:
+        item_collection.find_one_and_delete({"_id": id})
         item = dict(item)
-        item["_id"] = item["name"].replace(" ", "_")
-        item_collection.find_one_and_update({"_id": id}, {"$set": dict(item)})
+        id = item["name"].replace(" ", "_")
+        item["_id"] = id
+        item_collection.insert_one(item)
         new_item = item_collection.find_one({"_id": id})
         return item_serializer(new_item)
     except Exception as e:
