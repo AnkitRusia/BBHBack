@@ -4,7 +4,8 @@ def item_serializer(item):
         "name": str(item["name"]),
         "category": str(item["category"]),
         "price": [int(p) for p in item["price"]],
-        "veg": int(item["veg"])
+        "veg": int(item["veg"]),
+        "inStock": int(item["inStock"])
     }
 
 def items_serializer(items):

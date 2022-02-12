@@ -6,6 +6,7 @@ class Item(BaseModel):
     category: str
     price: List[int]
     veg: int
+    inStock: int
 
 class Category(BaseModel):
     _id: int
