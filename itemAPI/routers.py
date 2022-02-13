@@ -44,6 +44,24 @@ def add_item(items: List[Item]):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
+@router.get('/category')
+def get_category():
+    expired()
+    try:
+        category = category_collection.find_one({"_id": 1})
+        return category_serializer(category)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    
+@router.get('/category/{cat}')
+def get_items_by_category(cat: str):
+    expired()
+    try:
+        items = item_collection.find({"category": cat})
+        return items_serializer(items)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
 @router.get('/{id}')
 def get_by_id(id: str):
     expired()
@@ -77,24 +95,5 @@ def update_by_id(id: str, item: Item):
         item_collection.insert_one(item)
         new_item = item_collection.find_one({"_id": id})
         return item_serializer(new_item)
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
-
-@router.get('/category')
-def get_category():
-    expired()
-    try:
-        category = category_collection.find_one({"_id": 1})
-        return category_serializer(category)
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-    
-@router.get('/category/{cat}')
-def get_items_by_category(cat: str):
-    expired()
-    try:
-        items = item_collection.find({"category": cat})
-        return items_serializer(items)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
