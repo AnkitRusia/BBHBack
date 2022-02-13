@@ -33,10 +33,8 @@ def add_item(items: List[Item]):
                 prices = item["price"]
                 price_list = []
                 for _price in prices:
-                    try:
-                        price_list.append(int(_price))
-                    except:
-                        pass
+                    if _price > 0:
+                        price_list.append(_price)
                 item["price"] = price_list
                 item["_id"] = item["name"].replace(" ", "_")
                 _id = item_collection.insert_one(dict(item))
