@@ -59,6 +59,7 @@ def get_by_id(id: str):
 def update_by_id(id: str, item: Item):
     expired()
     try:
+        item = dict(item)
         old_id = id
         new_id = item["name"].replace(" ", "_")
         item["_id"] = new_id
@@ -67,7 +68,6 @@ def update_by_id(id: str, item: Item):
             item_collection.find_one_and_delete({"_id": new_id})
         except Exception as e:
             pass
-        item = dict(item)
         item_collection.insert_one(item)
         new_item = item_collection.find_one({"_id": id})
         return item_serializer(new_item)
