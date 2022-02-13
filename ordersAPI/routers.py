@@ -67,7 +67,7 @@ def get_order(tablenumber: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.delete("/paid/{tablenumber}")
-def delete_bill_paid(tablenumber: str):
+def delete_bill_paid(tablenumber: int):
     expired()
     try:
         order = order_collection.find_one({"tablenumber": tablenumber})
@@ -80,7 +80,7 @@ def delete_bill_paid(tablenumber: str):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.delete("/del/{tablenumber}")
-def delete_clear_table_lost_customer(tablenumber: str):
+def delete_clear_table_lost_customer(tablenumber: int):
     try:
         order_collection.find_one_and_delete({"tablenumber": tablenumber})
         return {"status": 200}
@@ -123,7 +123,7 @@ def new_order(tablenumber: int, getItems: GetTotalOrders):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.post("/changeOrder/{tablenumber}")
-def change_order(tablenumber: str, getItems: GetTotalOrders):
+def change_order(tablenumber: int, getItems: GetTotalOrders):
     expired()
     getItems = dict(getItems)
     items = [dict(itemqty) for itemqty in getItems["items"]]
