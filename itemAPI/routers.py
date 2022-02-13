@@ -46,7 +46,7 @@ def add_item(items: List[Item]):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-@router.get('/id')
+@router.get('/{id}')
 def get_by_id(id: str):
     expired()
     item = item_collection.find_one({"_id": id})
@@ -55,7 +55,7 @@ def get_by_id(id: str):
     else:
         return {404: "Not Found"}
 
-@router.put('/id')
+@router.put('/{id}')
 def update_by_id(id: str, item: Item):
     expired()
     try:
