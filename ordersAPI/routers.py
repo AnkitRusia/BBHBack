@@ -121,7 +121,7 @@ def new_order(tablenumber: int, getItems: GetTotalOrders):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.post("/changeOrder/{tablenumber}")
-def change_order(tablenumber: str, getItems: GetItems):
+def change_order(tablenumber: str, getItems: GetTotalOrders):
     expired()
     getItems = dict(getItems)
     items = [dict(itemqty) for itemqty in getItems["items"]]

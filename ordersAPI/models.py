@@ -47,7 +47,7 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket, name: str):
         self.connections.remove((websocket, name))
     
-    async def broadcast(self, to_name: str):
+    async def broadcast(self, data: str):
         for connection, name in self.connections:
             if name == 'owner':
-                await connection.send_text(f"notification received")
+                await connection.send_text(f"{data}")
