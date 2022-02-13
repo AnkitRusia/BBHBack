@@ -4,6 +4,12 @@ from datetime import datetime
 from itemAPI.models import Item
 from fastapi import WebSocket
 
+class OrderItem(BaseModel):
+    name: str
+    price: int
+    veg: int
+    type: str
+    qty: int
 
 class ItemQty(Item):
     """

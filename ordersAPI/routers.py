@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
-from ordersAPI.models import  GetItems, Stats, ConnectionManager
+from ordersAPI.models import  GetItems, Stats, ConnectionManager, OrderItem
 from mongosetup.mongodb import order_collection, order_data_collection
 from datetime import datetime
+from typing import List
 from utils.common import expired
 
   
@@ -46,7 +47,18 @@ def get_stats(stats: Stats):
         "bills": bills
     }
 
-@router.get("/{tablenumber}")
+@router.get("/tables")
+def get_tables_which_has_orders():
+    try:
+        op = order_collection.find({}, {"_id": 1})
+        table_list = []
+        for o in op:
+            table_list.append(o["_id"])
+        return table_list
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+@router.get("/currentOrder/{tablenumber}")
 def get_order(tablenumber: str):
     expired()
     try:
@@ -76,10 +88,9 @@ def delete_clear_table_lost_customer(tablenumber: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-@router.post("/{tablenumber}")
-def new_order(tablenumber: str, getItems: GetItems):
+@router.post("/newOrder/{tablenumber}")
+def new_order(tablenumber: str, getItems: List[OrderItem]):
     expired()
-    getItems = dict(getItems)
     try:
         if order_collection.count_documents({"tablenumber": tablenumber}) == 0:
             order = dict()
@@ -109,7 +120,7 @@ def new_order(tablenumber: str, getItems: GetItems):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-@router.put("/{tablenumber}")
+@router.post("/changeOrder/{tablenumber}")
 def change_order(tablenumber: str, getItems: GetItems):
     expired()
     getItems = dict(getItems)
