@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
-from ordersAPI.models import  GetItems, Stats, ConnectionManager, OrderItem
+from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders
 from mongosetup.mongodb import order_collection, order_data_collection
 from datetime import datetime
 from typing import List
@@ -49,16 +49,16 @@ def get_stats(stats: Stats):
 @router.get("/tables")
 def get_tables_which_has_orders():
     try:
-        op = order_collection.find({}, {"_id": 1})
+        op = order_collection.find({}, {"tablenumber": 1})
         table_list = []
         for o in op:
-            table_list.append(o["_id"])
+            table_list.append(o["tablenumber"])
         return table_list
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.get("/currentOrder/{tablenumber}")
-def get_order(tablenumber: str):
+def get_order(tablenumber: int):
     expired()
     try:
         current_order = order_collection.find_one({"tablenumber": tablenumber})
@@ -88,9 +88,10 @@ def delete_clear_table_lost_customer(tablenumber: str):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.post("/newOrder/{tablenumber}")
-def new_order(tablenumber: str, getItems: List[OrderItem]):
+def new_order(tablenumber: int, getItems: GetTotalOrders):
     expired()
     try:
+        getItems = dict(getItems)
         if order_collection.count_documents({"tablenumber": tablenumber}) == 0:
             order = dict()
             max_id = order_collection.find_one({'$query':{},'$orderby':{'_id':-1}})["_id"]
@@ -98,7 +99,7 @@ def new_order(tablenumber: str, getItems: List[OrderItem]):
             order["date"] = datetime.now()
             order["items"] = [dict(itemqty) for itemqty in getItems["items"]]
             order["amount"] = int(getItems["amount"])
-            order["ordernumber"] = max_id
+            order["ordernumber"] = max_id + 1
             order["tablenumber"] = tablenumber
             #return order
             _id = order_collection.insert_one(dict(order))

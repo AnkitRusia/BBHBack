@@ -11,6 +11,9 @@ class OrderItem(BaseModel):
     type: str
     qty: int
 
+class GetTotalOrders(BaseModel):
+    amount: int
+    items: List[OrderItem]
 class ItemQty(Item):
     """
     This class adds quantity to item class
