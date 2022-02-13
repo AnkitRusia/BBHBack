@@ -26,7 +26,6 @@ async def notify_instant(websocket: WebSocket, name: str):
             break
         
 
-
 @router.post("/stats")
 def get_stats(stats: Stats):
     stats = dict(stats)
