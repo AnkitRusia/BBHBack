@@ -103,7 +103,9 @@ def new_order(tablenumber: int, getItems: GetTotalOrders):
             order["tablenumber"] = tablenumber
             #return order
             _id = order_collection.insert_one(dict(order))
-            return _id
+            current_order = order_collection.find_one({"tablenumber": tablenumber})
+            return current_order
+            
         else:
             added_item = [dict(itemqty) for itemqty in getItems["items"]]
             current_order = order_collection.find_one({"tablenumber": tablenumber})
