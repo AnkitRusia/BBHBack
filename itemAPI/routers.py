@@ -27,7 +27,7 @@ def get_all_items():
 def add_item(items: List[Item]):
     expired()
     try:
-        if len(items) == 999:
+        if len(items) < 999:
             for item in items:
                 item = dict(item)
                 prices = item["price"]
