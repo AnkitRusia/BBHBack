@@ -68,6 +68,14 @@ def update_by_id(id: str, item: Item):
             item_collection.find_one_and_delete({"_id": new_id})
         except Exception as e:
             pass
+        prices = item["price"]
+        price_list = []
+        for _price in prices:
+            try:
+                price_list.append(int(_price))
+            except:
+                pass
+        item["price"] = price_list
         item_collection.insert_one(item)
         new_item = item_collection.find_one({"_id": id})
         return item_serializer(new_item)
