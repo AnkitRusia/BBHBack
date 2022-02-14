@@ -88,7 +88,9 @@ def update_by_id(id: str, item: Item):
         price_list = []
         for _price in prices:
             try:
-                price_list.append(int(_price))
+                price_int = int(_price)
+                if price_int > 0:
+                    price_list.append(price_int)
             except:
                 pass
         item["price"] = price_list

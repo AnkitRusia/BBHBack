@@ -29,8 +29,8 @@ all_name = item_collection.find()
 for name in all_name:
     name = dict(name)
     cat = name["category"]
-    if cat == "biryani":
-        name["category"] = "Biryani"
+    if cat == "soft drink":
+        name["category"] = "Soft Drink"
     item_collection.find_one_and_update({"_id": name["_id"]}, {"$set": name})
 print("Done")
 
