@@ -47,13 +47,10 @@ def get_stats(stats: Stats):
     }
 
 @router.get("/tables")
-def get_tables_which_has_orders():
+def get_all_orders():
     try:
-        op = order_collection.find({}, {"tablenumber": 1})
-        table_list = []
-        for o in op:
-            table_list.append(o["tablenumber"])
-        return table_list
+        all_orders = order_collection.find()
+        return all_orders
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
@@ -129,8 +126,10 @@ def change_order(tablenumber: int, getItems: GetTotalOrders):
     items = [dict(itemqty) for itemqty in getItems["items"]]
     current_order = order_collection.find_one({"tablenumber": tablenumber})
     current_order = dict(current_order)
+    return current_order
     current_order["items"] = items
     current_order["amount"] = getItems["amount"]
+    return current_order
     order_collection.find_one_and_update(
         {"tablenumber": tablenumber}, 
         {"$set": current_order}
