@@ -128,6 +128,7 @@ def change_order(tablenumber: int, getItems: GetTotalOrders):
     getItems = dict(getItems)
     items = [dict(itemqty) for itemqty in getItems["items"]]
     current_order = order_collection.find_one({"tablenumber": tablenumber})
+    current_order = dict(current_order)
     current_order["items"] = items
     current_order["amount"] = getItems["amount"]
     order_collection.find_one_and_update(
