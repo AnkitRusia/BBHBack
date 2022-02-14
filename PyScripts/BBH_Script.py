@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 import sys
 from datetime import datetime
+import pyqrcode
+import png
+from pyqrcode import QRCode
+import os
 # from dateutil.relativedelta import relativedelta
 
 client = MongoClient("mongodb+srv://bhilaibiryanihouseweb:BhilaiBiryaniHouse2022@cluster0.48fot.mongodb.net/items?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true")
@@ -21,7 +25,7 @@ print('''
 |   * * *           * * *        *       *   | 
 **********************************************
 
-This is admin pannel. Please use it carefully. In case of emergency please contact to +91 9827168348. 
+This is admin panel. Please use it carefully. In case of emergency please contact to +91 9827168348. 
 
 ''')
 
@@ -29,13 +33,14 @@ choices_p = '''
 Select the desired option: 
 
 1. Change password.
-2. Time left for website to expire.
-3. Exit
+2. Validity left.
+3. Generate QR
+4. Exit
 
 '''
 
 
-s = input("password: ")
+s = input("Shop Name: ")
 if not (s == "BBH" or s == 'bbh' or s == 'Bbh'):
     sys.exit()
 
@@ -55,6 +60,18 @@ while True:
         now = datetime.now()
         print(str(expire_date - now))
     elif ip == 3:
+        # String which represents the QR code
+        table_number = input("Enter Table number: ")
+        s = f"https://www.bhilaibiryanihouse.store/Customer/{table_number}"
+
+        # Generate QR code
+        url = pyqrcode.create(s)
+        
+        # Create and save the png file naming "Table_no_{}.png"
+        name = f'Table_no_{table_number}.png'
+        url.png(name, scale = 6)
+        print(f"Image saved in {os.getcwd()} with name {name}.")
+    elif ip == 4:
         sys.exit()
     ip = int(input("Choice: "))
     

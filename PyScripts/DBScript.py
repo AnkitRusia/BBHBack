@@ -1,6 +1,3 @@
-import json
-from typing import Type
-import certifi
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -16,18 +13,27 @@ expire_collection = db["expireCollection"]
 
 print("done")
 
-def order_serializer(order):
-    return {
-        "_id": int(order["_id"]),
-        "date": datetime,
-        "items": itemqty_serializer(order["items"]),
-        "amount": int,
-        "ordernumber": int,
-        "tablenumber": int
-    }
+def capname(name):
+    ns = name.split(" ")
+    new_name = ''
+    new_id = ''
+    for word in ns:
+        new_name += word[0].upper() + word[1:] + " "
+        new_id += word[0].upper() + word[1:] + "_"
+    new_id = new_id[:-1]
+    return new_name, new_id
 
-def all_order_serializer(orders):
-    return [order_serializer(order) for order in orders]
 
-op = order_collection.find()
-all_order_serializer(op)
+# items ke name ka 1st capital
+all_name = item_collection.find()
+for name in all_name:
+    name = dict(name)
+    cat = name["category"]
+    if cat == "biryani":
+        name["category"] = "Biryani"
+    item_collection.find_one_and_update({"_id": name["_id"]}, {"$set": name})
+print("Done")
+
+
+
+# delete kutta

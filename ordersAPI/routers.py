@@ -93,7 +93,11 @@ def new_order(tablenumber: int, getItems: GetTotalOrders):
         getItems = dict(getItems)
         if order_collection.count_documents({"tablenumber": tablenumber}) == 0:
             order = dict()
-            max_id = order_collection.find_one({'$query':{},'$orderby':{'_id':-1}})["_id"]
+            obj = order_collection.find_one({'$query':{},'$orderby':{'_id':-1}})
+            if obj:
+                max_id = obj["_id"]
+            else:
+                max_id = 1
             order["_id"] = max_id + 1
             order["date"] = datetime.now()
             order["items"] = [dict(itemqty) for itemqty in getItems["items"]]
