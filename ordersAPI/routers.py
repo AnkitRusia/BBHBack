@@ -4,6 +4,7 @@ from mongosetup.mongodb import order_collection, order_data_collection
 from datetime import datetime
 from typing import List
 from utils.common import expired
+from ordersAPI.schemas import all_order_serializer, order_serializer
 
   
 router = APIRouter(
@@ -50,7 +51,8 @@ def get_stats(stats: Stats):
 def get_all_orders():
     try:
         all_orders = order_collection.find()
-        return all_orders
+        return all_order_serializer(all_orders)
+        
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 

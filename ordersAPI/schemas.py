@@ -23,5 +23,12 @@ def order_serializer(order):
         "items": itemqty_serializer(order["items"]),
         "amount": int,
         "ordernumber": int,
-        "tablenumber": str
+        "tablenumber": int
     }
+
+def all_order_serializer(orders):
+    def one_order_serializer(order):
+        return dict(order)
+    
+    all_orders = [one_order_serializer(order) for order in orders]
+    return all_orders
