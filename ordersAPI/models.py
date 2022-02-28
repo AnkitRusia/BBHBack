@@ -31,6 +31,10 @@ class Order(BaseModel):
     amount: int
     tablenumber: str
     ordernumber: int
+    paymentMethod: str
+
+class PaymentMethod(BaseModel):
+    paymentMethod: str
 
 class Stats(BaseModel):
     month: int
