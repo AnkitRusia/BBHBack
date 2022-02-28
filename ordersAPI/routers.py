@@ -1,5 +1,6 @@
+from sqlite3 import Date
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
-from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders
+from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders, PaymentMethod
 from mongosetup.mongodb import order_collection, order_data_collection
 from datetime import datetime
 from typing import List
@@ -65,13 +66,16 @@ def get_order(tablenumber: int):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-@router.delete("/paid/{tablenumber}")
-def delete_bill_paid(tablenumber: int):
+@router.post("/paid/{tablenumber}")
+def delete_bill_paid(tablenumber: int, paymentMethod: PaymentMethod):
     expired()
     try:
+        paymentMethod = dict(paymentMethod)
         order = order_collection.find_one({"tablenumber": tablenumber})
         max_id = order_data_collection.find_one({'$query':{},'$orderby':{'_id':-1}})["_id"]
         order["_id"] = max_id + 1
+        order["tablenumber"] = str(tablenumber)
+        order["paymentMethod"] = paymentMethod["paymentMethod"]
         order_data_collection.insert_one(order)
         order_collection.find_one_and_delete({"tablenumber": tablenumber})
         return order
@@ -141,4 +145,23 @@ def change_order(tablenumber: int, getItems: GetTotalOrders):
     new_order = order_collection.find_one({"tablenumber": tablenumber})
     return new_order
 
-
+@router.post("/data")
+def get_data(start: datetime, end: datetime):
+    expired()
+    all_orders = order_data_collection.find({})
+    return_dict = {
+        "orders": [],
+        "totalOrders": 0,
+        "totalAmount": 0,
+        "errors": []
+    }
+    for each_order in all_orders:
+        try:
+            each_order = dict(each_order)
+            if start <= each_order["date"] <= end:
+                return_dict["orders"].append(each_order)
+                return_dict["totalAmount"] += each_order["amount"]
+        except Exception as e:
+            return_dict["errors"].append(str(e))
+    return_dict["totalOrders"] = len(return_dict["orders"])
+    return return_dict
