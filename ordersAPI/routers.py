@@ -1,6 +1,6 @@
 from sqlite3 import Date
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
-from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders, PaymentMethod
+from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders, PaymentMethod, Dates
 from mongosetup.mongodb import order_collection, order_data_collection
 from datetime import datetime
 from typing import List
@@ -146,8 +146,11 @@ def change_order(tablenumber: int, getItems: GetTotalOrders):
     return new_order
 
 @router.post("/data")
-def get_data(start: datetime, end: datetime):
+def get_data(dates: Dates):
     expired()
+    dates = dict(dates)
+    start = dates.get("startDate", datetime.now())
+    end = dates.get("endDate", datetime.now())
     all_orders = order_data_collection.find({})
     return_dict = {
         "orders": [],
