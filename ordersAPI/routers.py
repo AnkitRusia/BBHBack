@@ -167,5 +167,6 @@ def get_data(dates: Dates):
                 return_dict["totalAmount"] += each_order["amount"]
         except Exception as e:
             return_dict["errors"].append(str(e))
+    return_dict["totalAmount"] *= 1.05
     return_dict["totalOrders"] = len(return_dict["orders"])
     return return_dict
