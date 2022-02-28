@@ -2,7 +2,7 @@ from sqlite3 import Date
 from fastapi import APIRouter, HTTPException, status, WebSocket, WebSocketDisconnect
 from ordersAPI.models import  GetItems, Stats, ConnectionManager, GetTotalOrders, PaymentMethod, Dates
 from mongosetup.mongodb import order_collection, order_data_collection
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 from utils.common import expired
 from ordersAPI.schemas import all_order_serializer, order_serializer
@@ -151,6 +151,7 @@ def get_data(dates: Dates):
     dates = dict(dates)
     start = dates.get("startDate", datetime.now())
     end = dates.get("endDate", datetime.now())
+    end = end + timedelta(days=2, hours=6)
     all_orders = order_data_collection.find({})
     return_dict = {
         "orders": [],
